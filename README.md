@@ -1,10 +1,8 @@
-# General Reward Function Toolkit - AWS DeepRacer
+# General Reward Function toolkit for AWS DeepRacer
 
 [AWS DeepRacer](https://aws.amazon.com/deepracer/)  is an integrated learning system for users of all levels to 
-learn and explore **reinforcement learning** and to experiment and build autonomous 
-driving applications. You can train a reinforcement learning model and evaluate the model performance in the AWS 
-DeepRacer simulator. You can also download a trained model for deployment to your AWS DeepRacer vehicle for autonomous 
-driving in a physical environment. 
+learn and explore **reinforcement learning**. The code presented here is a result of a ML competition, developed 
+the "reward_function" used for the AWS DeepRacer model training. 
 
 ![AWS DR Environment](images/aws_dr_enviro.jpg "Deep Racer Training Environments (Simulator)")
 
@@ -12,11 +10,11 @@ driving in a physical environment.
 
 There are many well-trained models published using hardcoded "logic" in the **reward_function()**. The logic of the reward is 
 calculated based on the position of the car - determined by the nearest waypoint (the list of waypoints is fixed for 
-every circuit track). This approach is working well for just one specific circuit (which the code is designed for). 
-The goal of the code presented here is opposit: nothing is hardcoded and it should be working for any available circuit 
-track. It calculates optimal speed based on the situation (**how far is turn**, how tight it is, etc.) as well as ideal position 
-before the turn. Better results you then can gain by a simple change of some basic parameters instead of hardcoding for 
-each particular circuit.
+every circuit track). Such an approach is working well for just one specific circuit (which the code is designed for). 
+**The goal of the code presented here is oposit: nothing is hardcoded** and it should be working for any available circuit 
+track. It calculates optimal speed based on the situation (**how far is the nearest turn**, how sharp it is, etc.) as well 
+as ideal position before the turn. Better results you then can gain by a simple change of some basic parameters instead 
+of hardcoding such logic into the reward_function() for each particular circuit.
 
 This is the initial release of the "reward_function" in order to train, evaluate and participate in a competition 
 (Honeywell AI day on July 30, 2019). Designed and trained to drive up to 5 m/s, implementing the following features:
@@ -32,9 +30,9 @@ relevant for the calculation of the reward value based on input values describin
 
 ```python
 class RewardEvaluator:
-    def getCarHeadingError(self): 
+    def get_car_heading_error(self): 
         ...
-    def getExpectedTurnDirection(self):
+    def get_expected_turn_direction(self):
         ...
              
     .... implemented set of other basic functions
@@ -107,20 +105,12 @@ parse @message "SIM_TRACE_LOG:*,*,*,*,*,*,*,*,*,*,*,*,*,*,*" as episodes,steps,x
 10|2.7719
 11|2.7923
 12|2.6962
-13|2.9074
-14|2.8509
-15|2.8192
-16|2.841
-17|2.7646
-18|2.7886
-19|2.7449
-20|2.7891
-21|2.7432
 | |... and more
 
 You may need temporarily log input parameters or debug your code. To log anything you 
-just do print() and the output is saved to log. For status logging uncomment  one
-line (self.statusToString()) in the evaluate() method. You can then find in the log logged status for every evaluation of the reward (each simulation/training step)
+just do print() and the output is saved to log. For reach status logging uncomment  one
+line (self.status_to_string()) in the evaluate() method. You can then find in the log logged status for every evaluation 
+of the reward (each simulation/training step). This you will find very useful when debugging or finetuning the performance.
 
 **WARNING:** Do not use logging to much. Unless it is worth to spend your money. For every 
 logging attempt Amazon is charging you :-). A few hours of training can cost you a 
@@ -128,7 +118,7 @@ few dollars! Less you spend for logging more you can spend for training.
 
 ```python
 class RewardEvaluator:
-    def statusToString(self):
+    def status_to_string(self):
         status = self.params
         #if 'waypoints' in status: del status['waypoints']
         status['debug_log'] = self.log_message
@@ -136,8 +126,7 @@ class RewardEvaluator:
     
     def evaluate(self):
         ...
-        # self.statusToString()  
-        return float(retval)
+        status_status_to_string    return float(retval)
 
 def reward_function(params):
     re = RewardEvaluator(params)
@@ -156,9 +145,12 @@ def reward_function(params):
   - **Discount factor** : 0.999
   - **Loss type** : Huber 
   
-# Result
-  - Model trained on "re:Invent 2018" circuit, 4 hours.
-  - Evaluated using "Bowtle track" - 100% completion, 3 trials :-)
+# Summary
+
+The reward function presented here "as-is" helps you to get into reinforcement learning. Within just a 5 minutes you can 
+start training. Model trained on "re:Invent 2018" circuit for 3 hours can achieve in the simulator (as well as in real 
+challenge) sufficient speed to finish the each lap in less then 20 seconds. Evaluation example : The model "Bowtle track" 
+completes 100% of all trials. 
 
 ![reInvent2018 circuit](images/circuit_track_reInvent2018.png "reInvent2018 circuit")
 
@@ -168,12 +160,12 @@ Fig #1 : re:Invent 2018 Circuit track used for training.
 
 Fig #2. Bowtie circuit track used for evaluation.
 
-To gain good results (aim is to train the car to drive as fast as possible and finish the lap in the shortest time 
-possible), you need to provide the reward_function code (in Python) and then set proper parameters for the 
-Neural network. The design of the reward function itself is approx. 50% of the job, the rest you can gain by right 
-training time and setting of training parameters. Using default values for the training and giving 2 hours the 
-model being trained you achieve approx 19 seconds/lap (re:Invent2018), the model will be able to perform well on 
-any other circuit. 
+To gain better results (aim is to train the car to drive as fast as possible and finish the lap in the shortest time 
+possible), you need to further fine tune the reward_function code (in Python) and then set proper parameters for the 
+Neural network. The design of the reward function itself is approx. 50% of the job. The rest you can gain by right 
+training time and setting of training parameters. 
+
+Good luck to use the code and find better combination of implemented features!
 
 #### Links
 https://github.com/aws-samples/aws-deepracer-workshops/tree/master/Workshops/2019-AWSSummits-AWSDeepRacerService/Lab0_Create_resources

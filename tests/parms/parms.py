@@ -4,14 +4,15 @@ import copy
 
 """
 This is a handy storage from where testing routine can pickup input parameters defined for various circuit you are to 
-test and finetune the performance. For each circuit you can get easily samples of data  from log when training the model. 
-Just uncomment line "#self.statusToString()" in method evaluate(). You can then just cut params inputs from the log  and 
-paste it here. For each particular test (circuit paths) just pickup right "params" and paste it here. 
+test and fine tune the performance. For each circuit you can get easily samples of data  from log when training the 
+model. Just uncomment line "#self.status_to_string()" in method evaluate(). You can then just cut params inputs from 
+the log  and  paste it here. For each particular test (circuit paths) just pickup right "params" and paste it here. 
 """
+
 
 # Sample of logged "params" inputs logged when training on the REINVENT2018 circuit track
 
-parms_default = {
+params_default = {
     "all_wheels_on_track": True,
     "x": 3.1820,
     "y": 0.6817,
@@ -63,9 +64,10 @@ parms_default = {
     "closest_waypoints": [3, 4]
 }
 
+
 # Sample of logged "params" inputs logged when training on the BOWTE circuit track
 
-parms_bowtle = {
+params_bowtle = {
     'heading': 0.5103798048625331,
     'all_wheels_on_track': True,
     'is_left_of_center': False,
@@ -167,7 +169,7 @@ parms_bowtle = {
 
 # Sample of logged "params" inputs derived from the REINVENT2018 circuit track (test specific status values)
 
-parms_imut = {
+params_reinvent2018 = {
     "all_wheels_on_track": True,
     "x": 3.1820,
     "y": 0.6817,
@@ -219,15 +221,17 @@ parms_imut = {
     "closest_waypoints": [3, 4]
 }
 
+
 # As testing script is manipulating values of "params" (and the params is given by reference), this method creates a
 # copy which allows the manipulation and avoids any manipulation will harm another test.
 
-def getCopyOfParm(parm=None):
-    if parm == None:
-        return copy.deepcopy(parms_default)
-    elif parm == "BOWTLE":
-        return copy.deepcopy(parms_bowtle)
-    elif parm == "parms_imut":
-        return copy.deepcopy(parms_imut)
+
+def get_copy_of_params(param_name=None):
+    if param_name is None:
+        return copy.deepcopy(params_default)
+    elif param_name == "BOWTLE":
+        return copy.deepcopy(params_bowtle)
+    elif param_name == "params_reinvent2018":
+        return copy.deepcopy(params_reinvent2018)
     else:
         return None
