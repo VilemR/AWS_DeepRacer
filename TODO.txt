@@ -1,0 +1,2 @@
+Dopsat vsede vyznam py souboru
+Do reward.py uvodni intro k cemu to je

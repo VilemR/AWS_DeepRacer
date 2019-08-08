@@ -3,6 +3,14 @@
 import math
 import traceback
 
+"""
+This is the source code you cut and paste into AWS console. It consists of RewardEvaluator class that is instantiated
+by the code of the desired reward_function(). The  RewardEvaluator contains set of elementary  "low level" functions 
+calculation for example distance between waipoints, directions as well as higher level functions (e.g. nearest turn 
+direction and distance) allowing you to design more complex reward logic.
+"""
+
+
 class RewardEvaluator:
 
     # CALCULATION CONSTANTS - change for the performance fine tuning

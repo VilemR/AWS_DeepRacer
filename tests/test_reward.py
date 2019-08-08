@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+"""
+This is the test code used to test implemented methods and function in the ../reward_function.py file. The set of
+unit test is optional for you to use. You will not use it for purpose of training in AWS console.
+"""
+
 import math
 import unittest
 
