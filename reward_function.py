@@ -114,12 +114,14 @@ class RewardEvaluator:
             return self.waypoints[index_way_point]
 
     # Calculates distance [m] between two waypoints [x1,y1] and [x2,y2]
-    def get_way_points_distance(self, previous_waypoint, next_waypoint):
+    @staticmethod
+    def get_way_points_distance(previous_waypoint, next_waypoint):
         return math.sqrt(pow(next_waypoint[1] - previous_waypoint[1], 2) + pow(next_waypoint[0] - previous_waypoint[0], 2))
 
     # Calculates heading direction between two waypoints - angle in cartesian layout. Clockwise values
     # 0 to -180 degrees, anti clockwise 0 to +180 degrees
-    def get_heading_between_waypoints(self, previous_waypoint, next_waypoint):
+    @staticmethod
+    def get_heading_between_waypoints(previous_waypoint, next_waypoint):
         track_direction = math.atan2(next_waypoint[1] - previous_waypoint[1], next_waypoint[0] - previous_waypoint[0])
         return math.degrees(track_direction)
 
@@ -195,7 +197,6 @@ class RewardEvaluator:
     # Provides direction of the next turn in order to let you reward right position to the center line (before the left
     # turn position of the car sligthly right can be rewarded (and vice versa) - see is_in_optimized_corridor()
     def get_expected_turn_direction(self):
-        current_position_xy = (self.x, self.y)
         current_waypoint_index = self.closest_waypoints[1]
         length = self.get_way_points_distance((self.x, self.y), self.get_way_point(current_waypoint_index))
         while True:

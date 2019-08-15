@@ -1,32 +1,69 @@
-General Reward Function toolkit for AWS DeepRacer
+AWS DeepRacer – reward_function() to start easily
 -------------
-[AWS DeepRacer](https://aws.amazon.com/deepracer/)  is an integrated learning system for users of all levels to 
-learn and explore **reinforcement learning**. The code presented here is a result of a ML competition, developed 
-the "reward_function" used for the AWS DeepRacer model training. 
 
-![AWS DR Environment](images/aws_dr_enviro.jpg "Deep Racer Training Environments (Simulator)")
+The code presented here is a reward function() for the [AWS DeepRacer](https://aws.amazon.com/deepracer/) 
+ vehicle training tasks (Reinforcement Machine Learning). It is an outcome of the participation on 
+ Honeywell AI day competition. 
+ 
+![AWS DR Environment](images/aws_dr_car.jpg "Deep Racer vehicle.")
 
-### The REWARD_FUNCTION code
 
-There are many well-trained models published using hardcoded "logic" in the **reward_function()**. The logic of the reward is 
-calculated based on the position of the car - determined by the nearest waypoint (the list of waypoints is fixed for 
-every circuit track). Such an approach is working well for just one specific circuit (which the code is designed for). 
-**The goal of the code presented here is opposite: nothing is hardcoded** and it should be working for any available circuit 
-track. It calculates optimal speed based on the situation (**how far is the nearest turn**, how sharp it is, etc.) as well 
-as ideal position before the turn. Better results you then can gain by a simple change of some basic parameters instead 
-of hardcoding such logic into the reward_function() for each particular circuit.
 
-This is the initial release of the "reward_function" in order to train, evaluate and participate in a competition 
-(Honeywell AI day on July 30, 2019). Designed and trained to drive up to 5 m/s, implementing the following features:
-  - **Car heading error**.
-  - **Smooth steering angle**.
-  - **Detection of a turn** in the "near horizon".
-  - **Driving in optimised corridor** (inside the turn, outside when approaching).
-  - **Optimal speed calculator** (depending on the "horizon").
-  - Additional **basic calculations** - angle and distance between runtime waypoints, etc.
+Compared to other reward functions 
+presented on Internet this code is bringing much better level of the problem abstraction and is allowing easy and safe 
+changes in the reward strategies. This approach is a big benefit also for non-pythonic programmers allowing them to 
+build complex reward strategy with a minimum knowledge of the Python syntax. See the example:
 
-The "reward" is calculated by the RewardEvaluator class which has implemented above-mentioned set of methods (features) 
-relevant for the calculation of the reward value based on input values describing the "situation" (conditions). 
+The functionality implemented in following fragment of the code
+```python
+def reward_function(params):
+    waypoints = params['waypoints']
+    closest_waypoints = params['closest_waypoints']
+    heading = params['heading']
+    reward = 1.0
+    next_point = waypoints[closest_waypoints[1]]
+    prev_point = waypoints[closest_waypoints[0]]
+    track_direction = math.atan2(next_point[1] - prev_point[1], next_point[0] - prev_point[0]) 
+    track_direction = math.degrees(track_direction)
+    direction_diff = abs(track_direction - heading)
+    if direction_diff > 180:
+        direction_diff = 360 - direction_diff
+    DIRECTION_THRESHOLD = 10.0
+    if direction_diff > DIRECTION_THRESHOLD:
+        reward *= 0.5
+    return reward
+```
+
+can be easily replace by just a couple of lines:
+```python
+    reward = 1.0
+    if abs(self.get_car_heading_error()) <=DIRECTION_THRESHOLD:
+        reward *= 0.5
+    return reward
+```
+
+More over in the code is possible to enable easy status and reward evaluation logging, each functionality can be tested 
+(unit tests included) and expected output of some functions can be shown and finetuned prior the deployment (e.g. speed 
+or distance to the center line before the turn, passing waypoint, …etc.). 
+
+This is the full list of implemented functions and methods you can easily use and still combine with any 
+underlying function or status value:
+```python
+    def get_way_point(self, index_way_point)
+    def get_way_points_distance(previous_waypoint, next_waypoint)
+    def get_heading_between_waypoints(previous_waypoint, next_waypoint)
+    def get_car_heading_error(self)
+    def get_optimum_speed_ratio(self)
+    def get_turn_angle(self)
+    def is_in_turn(self)
+    def reached_target(self)
+    def get_expected_turn_direction(self)
+    def is_in_optimized_corridor(self)
+```
+The signatures are self explaining, for more detail please read commented lines in the source code. 
+The "reward" is calculated by the RewardEvaluator class which has implemented above-mentioned set of 
+ features relevant to the calculation of the reward value based on input values describing the "situation" 
+ (conditions). 
 
 ```python
 class RewardEvaluator:
@@ -60,12 +97,15 @@ From the set of implemented features, you can easily choose what best fits to yo
  itself you are supposed to implement in the method evaluate(). It is up to you to combine features, 
 use weights, change logic, priorities...whatever you need to develop the reward function and train your best model :-)
 
-The reward function presented here has been used for reInvent2018 circuit track. The track consists of the following waypoints:
+The reward function presented here has been intended to be used for reInvent2018 circuit track but  you 
+can use it for any existing circuit track. It will well perform for training as well for evaluation on any circuit.
+
+The reInvent2018 track consists of the following waypoints:
 
 ![reInvent2018 waypoints](images/circuit_track_reInvent2018_waypoints.png "reInvent2018 circuit")
 
 The length of the track is approx. 17.5 m, track width is 1.2 m. After 1 hour training, the model will most probably 
-need in average 20 seconds to finish the lap. The challenge is to reach less than 10 seconds (training time required >2h).
+need in average 20 seconds to finish the lap. The challenge is to reach less than 10 seconds (training time required >4h).
 
 ### Log Analysis
 
@@ -98,13 +138,6 @@ parse @message "SIM_TRACE_LOG:*,*,*,*,*,*,*,*,*,*,*,*,*,*,*" as episodes,steps,x
 3|2.8023
 4|2.7969
 5|2.7346
-6|2.6869
-7|2.6626
-8|2.6879
-9|2.7686
-10|2.7719
-11|2.7923
-12|2.6962
 | |... and more
 
 You may need temporarily log input parameters or debug your code. To log anything you 
@@ -134,36 +167,21 @@ def reward_function(params):
 
 ```
 
-
-### Training - Action space :
-  - **Steering between -30 to +30 degrees** (steering angle granularity 5)
-  - **Speed up to 5 m/s** (speed granularity 3)
-  - **Gradient descent** batch size : 64
-  - **Number of epochs** : 10
-  - **Learning rate** : 0.0003
-  - **Entropy** : 0.01
-  - **Discount factor** : 0.999
-  - **Loss type** : Huber 
-  
-### Summary
-
-The reward function presented here "as-is" helps you to get into reinforcement learning. Within just 5 minutes you can 
-start training. Model trained on "re:Invent 2018" circuit for 3 hours can achieve in the simulator (as well as in real 
-challenge) sufficient speed to finish the each lap in less then 20 seconds. Evaluation example: The model "Bowtle track" 
-completes 100% of all trials. 
-
-![reInvent2018 circuit](images/circuit_track_reInvent2018.png "reInvent2018 circuit")
-
-Fig #1 : re:Invent 2018 Circuit track used for training.
-
-![Bowtie circuit](images/circuit_track_bowtie.png "Bowtie circuit")
-
-Fig #2. Bowtie circuit track used for evaluation.
-
 To gain better results (aim is to train the car to drive as fast as possible and finish the lap in the shortest time 
 possible), you need to further fine tune the reward_function code (in Python) and then set proper parameters for the 
 Neural network. The design of the reward function itself is approx. 50% of the job. The rest you can gain by right 
 training time and setting of training parameters. 
+
+Once you are fine with the reward logic, focus on settings right hyperparameters. For initial run keep default values 
+and let it be lerning for approx 20 minutes. The car will be driving still crazy but you will get idea about the 
+convergence and learning speed. My first option is to focus on gradient descent parameter to ensure the model is learning 
+gradually and the learning curve is smooth. Do not be frustrated  once you let it train and after 2 hours the only 
+achievement is 75% ration of successfully finished tasks. Do not panic - even this ration of finished tasks will let
+your model already finish 95% of laps when on the real circuit track. 
+
+Best performing models (Gopi, Neeraj, Poching) were trained for 6-12 hours, mainly using still somehow simple reward 
+strategies. Models having hardcoded reward based on waypoints (designed for one particular circuit track) were 
+demonstrating over fitting very soon - approx. after 6 hours of training.   
 
 Good luck to use the code and find better combination of implemented features!
 
