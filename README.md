@@ -1,20 +1,18 @@
 AWS DeepRacer – reward_function() to start easily
 -------------
 
-The code presented here is a reward function() for the [AWS DeepRacer](https://aws.amazon.com/deepracer/) 
+The code presented here is a **reward function()** for the [AWS DeepRacer](https://aws.amazon.com/deepracer/) 
  vehicle training tasks (Reinforcement Machine Learning). It is an outcome of the participation on 
  Honeywell AI day competition. 
  
 ![AWS DR Environment](images/aws_dr_car.jpg "Deep Racer vehicle.")
 
-
-
 Compared to other reward functions 
 presented on Internet this code is bringing much better level of the problem abstraction and is allowing easy and safe 
 changes in the reward strategies. This approach is a big benefit also for non-pythonic programmers allowing them to 
-build complex reward strategy with a minimum knowledge of the Python syntax. See the example:
+build complex reward strategy with a minimum knowledge of the Python syntax. 
 
-The functionality implemented in following fragment of the code
+Example: the following fragment of the code
 ```python
 def reward_function(params):
     waypoints = params['waypoints']
@@ -34,7 +32,7 @@ def reward_function(params):
     return reward
 ```
 
-can be easily replace by just a couple of lines:
+can be easily replaced by just a couple of lines:
 ```python
     reward = 1.0
     if abs(self.get_car_heading_error()) <=DIRECTION_THRESHOLD:
@@ -61,7 +59,7 @@ underlying function or status value:
     def is_in_optimized_corridor(self)
 ```
 The signatures are self explaining, for more detail please read commented lines in the source code. 
-The "reward" is calculated by the RewardEvaluator class which has implemented above-mentioned set of 
+The reward value is calculated by the **RewardEvaluator class** which has implemented above-mentioned set of 
  features relevant to the calculation of the reward value based on input values describing the "situation" 
  (conditions). 
 
@@ -94,7 +92,7 @@ designing more complex reward strategies. All these features presented here are 
 (see **test_reward.py**). Extend it according to your needs. You safe a lot of time and it will pay back soon! 
 
 From the set of implemented features, you can easily choose what best fits to your requirements. The calculation logic 
- itself you are supposed to implement in the method evaluate(). It is up to you to combine features, 
+ itself you are supposed to implement in the method **evaluate()**. It is up to you to combine features, 
 use weights, change logic, priorities...whatever you need to develop the reward function and train your best model :-)
 
 The reward function presented here has been intended to be used for reInvent2018 circuit track but  you 
@@ -172,11 +170,11 @@ possible), you need to further fine tune the reward_function code (in Python) an
 Neural network. The design of the reward function itself is approx. 50% of the job. The rest you can gain by right 
 training time and setting of training parameters. 
 
-Once you are fine with the reward logic, focus on settings right hyperparameters. For initial run keep default values 
-and let it be lerning for approx 20 minutes. The car will be driving still crazy but you will get idea about the 
+Once you are fine with the reward logic, focus on **hyperparameters**. For initial run keep default values 
+and let it be learning for approx 20 minutes. The car will be driving still crazy but you will get idea about the 
 convergence and learning speed. My first option is to focus on gradient descent parameter to ensure the model is learning 
 gradually and the learning curve is smooth. Do not be frustrated  once you let it train and after 2 hours the only 
-achievement is 75% ration of successfully finished tasks. Do not panic - even this ration of finished tasks will let
+achievement is 75% ration of successfully finished tasks. Do not panic - even this ratio of finished tasks will let
 your model already finish 95% of laps when on the real circuit track. 
 
 Best performing models (Gopi, Neeraj, Poching) were trained for 6-12 hours, mainly using still somehow simple reward 
