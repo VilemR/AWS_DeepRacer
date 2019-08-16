@@ -7,10 +7,9 @@ The code presented here is a **reward function()** for the [AWS DeepRacer](https
  
 ![AWS DR Environment](images/aws_dr_car.jpg "Deep Racer vehicle.")
 
-Compared to other reward functions 
-presented on Internet this code is bringing much better level of the problem abstraction and is allowing easy and safe 
-changes in the reward strategies. This approach is a big benefit also for non-pythonic programmers allowing them to 
-build complex reward strategy with a minimum knowledge of the Python syntax. 
+Compared to other reward functions presented on the Internet this code is bringing a much better level of the problem 
+abstraction and is allowing easy and safe changes in the reward strategies. This approach is a big benefit also for 
+non-pythonic programmers allowing them to build complex reward strategy with a minimum knowledge of the Python syntax. 
 
 Example: the following fragment of the code
 ```python
@@ -40,9 +39,9 @@ can be easily replaced by just a couple of lines:
     return reward
 ```
 
-More over in the code is possible to enable easy status and reward evaluation logging, each functionality can be tested 
-(unit tests included) and expected output of some functions can be shown and finetuned prior the deployment (e.g. speed 
-or distance to the center line before the turn, passing waypoint, …etc.). 
+Moreover in the code is possible to enable easy status and reward evaluation logging, each functionality can be tested 
+(unit tests included) and the expected output of some functions can be shown and finetuned prior the deployment (e.g. speed 
+or distance to the centerline before the turn, passing waypoint, …etc.). 
 
 This is the full list of implemented functions and methods you can easily use and still combine with any 
 underlying function or status value:
@@ -58,8 +57,8 @@ underlying function or status value:
     def get_expected_turn_direction(self)
     def is_in_optimized_corridor(self)
 ```
-The signatures are self explaining, for more detail please read commented lines in the source code. 
-The reward value is calculated by the **RewardEvaluator class** which has implemented above-mentioned set of 
+The signatures are self-explaining, for more detail please read commented lines in the source code. 
+The reward value is calculated by the **RewardEvaluator class** which has implemented the above-mentioned set of 
  features relevant to the calculation of the reward value based on input values describing the "situation" 
  (conditions). 
 
@@ -87,9 +86,9 @@ available on the Internet:
   - the first reason was **one Class is better for readability** (instead of functions and subroutines) and 
   - the second reason was **easier testing**.  
 
-I recommend you to keep this approach unless you want lose a lot of time when looking for buggy code when you are 
+I recommend you to keep this approach unless you want to lose a lot of time when looking for buggy code when you are 
 designing more complex reward strategies. All these features presented here are having their tests 
-(see **test_reward.py**). Extend it according to your needs. You safe a lot of time and it will pay back soon! 
+(see **test_reward.py**). Extend it according to your needs. You save a lot of time and it will pay back soon! 
 
 From the set of implemented features, you can easily choose what best fits to your requirements. The calculation logic 
  itself you are supposed to implement in the method **evaluate()**. It is up to you to combine features, 
@@ -102,13 +101,14 @@ The reInvent2018 track consists of the following waypoints:
 
 ![reInvent2018 waypoints](images/circuit_track_reInvent2018_waypoints.png "reInvent2018 circuit")
 
-The length of the track is approx. 17.5 m, track width is 1.2 m. After 1 hour training, the model will most probably 
-need in average 20 seconds to finish the lap. The challenge is to reach less than 10 seconds (training time required >4h).
+The length of the track is approx. 17.5 m and the track width is 1.2 m. After 1 hour of training, the model will most 
+probably need in average 20 seconds to finish the lap. The challenge is to reach less than 10 seconds (training time 
+required >4h).
 
 ### Log Analysis
 
-I recommend you to use logs to analyze the performance of your model. The log is very valuable source of information you 
-need to fine tune the performance. Default query to start the analysis is as follows:
+I recommend you to use logs to analyze the performance of your model. The log is a very valuable source of information you 
+need to fine-tune the performance. Default query to start the analysis is as follows:
 
 ```python
  filter @message like /^SIM_TRACE_LOG/
@@ -119,7 +119,7 @@ need to fine tune the performance. Default query to start the analysis is as fol
 
 ![Log analysis](images/aws_sonsole_loganalysis.png "Log analysis view")
 
-Query example to check average speed sorted by closest wayipoints:
+Query example to check average speed sorted by closest waypoints:
 
 ```python
 parse @message "SIM_TRACE_LOG:*,*,*,*,*,*,*,*,*,*,*,*,*,*,*" as episodes,steps,x,y,heading,steering,speed,action_taken,reward,done, all_wheels_on_track, progress,closest_waypoint_index,track_length,time 
@@ -144,8 +144,8 @@ line (self.status_to_string()) in the evaluate() method. You can then find in th
 of the reward (each simulation/training step). This you will find very useful when debugging or finetuning the performance.
 
 **WARNING:** Do not use logging too much. Unless it is worth to spend your money. For every 
-logging attempt Amazon is charging you :-). A few hours of training can cost you a 
-few dollars! Less you spend for logging more you can spend for training.  
+logging attempt, Amazon is charging you :-). A few hours of training can cost you a 
+few dollars! Less you spend logging more you can spend on training.  
 
 ```python
 class RewardEvaluator:
@@ -166,12 +166,12 @@ def reward_function(params):
 ```
 
 To gain better results (aim is to train the car to drive as fast as possible and finish the lap in the shortest time 
-possible), you need to further fine tune the reward_function code (in Python) and then set proper parameters for the 
+possible), you need to further fine-tune the reward_function code (in Python) and then set proper parameters for the 
 Neural network. The design of the reward function itself is approx. 50% of the job. The rest you can gain by right 
 training time and setting of training parameters. 
 
 Once you are fine with the reward logic, focus on **hyperparameters**. For initial run keep default values 
-and let it be learning for approx 20 minutes. The car will be driving still crazy but you will get idea about the 
+and let it be learning for approx 20 minutes. The car will be driving still crazy but you will get an idea about the 
 convergence and learning speed. My first option is to focus on gradient descent parameter to ensure the model is learning 
 gradually and the learning curve is smooth. Do not be frustrated  once you let it train and after 2 hours the only 
 achievement is 75% ration of successfully finished tasks. Do not panic - even this ratio of finished tasks will let
@@ -181,7 +181,7 @@ Best performing models (Gopi, Neeraj, Poching) were trained for 6-12 hours, main
 strategies. Models having hardcoded reward based on waypoints (designed for one particular circuit track) were 
 demonstrating over fitting very soon - approx. after 6 hours of training.   
 
-Good luck to use the code and find better combination of implemented features!
+Good luck to use the code and find a better combination of implemented features!
 
 #### Links
 https://github.com/aws-samples/aws-deepracer-workshops/tree/master/Workshops/2019-AWSSummits-AWSDeepRacerService/Lab0_Create_resources
