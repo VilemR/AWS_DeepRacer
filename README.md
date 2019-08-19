@@ -11,7 +11,7 @@ Compared to other reward functions presented on the Internet this code is bringi
 abstraction and is allowing easy and safe changes in the reward strategies. This approach is a big benefit also for 
 non-pythonic programmers allowing them to build complex reward strategy with a minimum knowledge of the Python syntax. 
 
-Example: the following fragment of the code
+Example: the following fragment of the ubiquitous many-lines code:
 ```python
 def reward_function(params):
     waypoints = params['waypoints']
