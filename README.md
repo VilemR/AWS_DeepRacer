@@ -11,7 +11,7 @@ Compared to other reward functions presented on the Internet this code is bringi
 abstraction and is allowing easy and safe changes in the reward strategies. This approach is a big benefit also for 
 non-pythonic programmers allowing them to build complex reward strategy with a minimum knowledge of the Python syntax. 
 
-Example: the following fragment of the ubiquitous many-lines code:
+Example: the following fragment of the ubiquitous 'many-lines' code:
 ```python
 def reward_function(params):
     waypoints = params['waypoints']
@@ -38,6 +38,8 @@ can be easily replaced by just a couple of lines:
         reward *= 0.5
     return reward
 ```
+
+Focus on building  your strategy instead of producing lines of code :-)
 
 Moreover in the code is possible to enable easy status and reward evaluation logging, each functionality can be tested 
 (unit tests included) and the expected output of some functions can be shown and finetuned prior the deployment (e.g. speed 
