@@ -159,7 +159,8 @@ class RewardEvaluator:
     
     def evaluate(self):
         ...
-        status_status_to_string    return float(retval)
+        #self.status_to_string()    
+        return float(retval)
 
 def reward_function(params):
     re = RewardEvaluator(params)
