@@ -5,8 +5,8 @@ import traceback
 
 """
 This is the source code you cut and paste into AWS console. It consists of RewardEvaluator class that is instantiated
-by the code of the desired reward_function(). The  RewardEvaluator contains set of elementary  "low level" functions 
-calculation for example distance between waipoints, directions as well as higher level functions (e.g. nearest turn 
+by the code of the desired reward_function(). The  RewardEvaluator contains a set of elementary  "low level" functions 
+ for example the distance calculation between waypoints, directions as well as higher-level functions (e.g. nearest turn 
 direction and distance) allowing you to design more complex reward logic.
 """
 
@@ -15,22 +15,22 @@ class RewardEvaluator:
 
     # CALCULATION CONSTANTS - change for the performance fine tuning
 
-    # Define minimum and maximum expected spped interval for the training. Both values should be corresponding to
+    # Define minimum and maximum expected speed interval for the training. Both values should be corresponding to
     # parameters you are going to use for the Action space. Set MAX_SPEED equal to maximum speed defined there,
     # MIN_SPEED should be lower (just a bit) then expected minimum defined speed (e.g. Max speed set to 5 m/s,
-    # speed granularity 3 => therefore MIN_SPEED should be less than 1.66 m/s.
+    # speed granularity 3 => therefore, MIN_SPEED should be less than 1.66 m/s.
     MAX_SPEED = float(5.0)
     MIN_SPEED = float(1.5)
 
-    # Define maximum steering angle according to the Action space settings. Smooth steering angle treshold is used to
-    # set a steering angle still considered as "smooth". The value must be higher than minumum steering angle determined
+    # Define maximum steering angle according to the Action space settings. Smooth steering angle threshold is used to
+    # set a steering angle still considered as "smooth". The value must be higher than minimum steering angle determined
     # by the steering Action space. E.g Max steering 30 degrees, granularity 3 => SMOOTH_STEERING_ANGLE_TRESHOLD should
     # be higher than 10 degrees.
     MAX_STEERING_ANGLE = 30
     SMOOTH_STEERING_ANGLE_TRESHOLD = 15  # Greater than minimum angle defined in action space
 
     # Constant value used to "ignore" turns in the corresponding distance (in meters). The car is supposed to drive
-    # at MAX_SPEED (getting higher reward). In case within the distance is a turn, the car is rewarded when slowing
+    # at MAX_SPEED (getting a higher reward). In case within the distance is a turn, the car is rewarded when slowing
     # down.
     SAFE_HORIZON_DISTANCE = 0.8  # meters, able to fully stop. See ANGLE_IS_CURVE.
 
@@ -38,11 +38,11 @@ class RewardEvaluator:
     CENTERLINE_FOLLOW_RATIO_TRESHOLD = 0.12
 
     # Constant to define a threshold (in degrees), representing max. angle within SAFE_HORIZON_DISTANCE. If the car is
-    # supposed to start steering and the angle of the farest wayipont is above the threshold, the car is supposed to
+    # supposed to start steering and the angle of the farthest waypoint is above the threshold, the car is supposed to
     # slow down
     ANGLE_IS_CURVE = 3
 
-    # A range the reward value mut fit in.
+    # A range the reward value must fit in.
     PENALTY_MAX = 0.001
     REWARD_MAX = 89999  # 100000
 
@@ -102,7 +102,7 @@ class RewardEvaluator:
         status['debug_log'] = self.log_message
         print(status)
 
-    # Gets ind'th wayipoint from the list of all waypoints retrieved in params['waypoints']. Waypoints are circuit track
+    # Gets ind'th waypoint from the list of all waypoints retrieved in params['waypoints']. Waypoints are circuit track
     # specific (every time params is provided it is same list for particular circuit). If index is out of range (greater
     # than len(params['waypoints']) a waypoint from the beginning of the list ir returned.
     def get_way_point(self, index_way_point):
@@ -125,7 +125,7 @@ class RewardEvaluator:
         track_direction = math.atan2(next_waypoint[1] - previous_waypoint[1], next_waypoint[0] - previous_waypoint[0])
         return math.degrees(track_direction)
 
-    # Calculates misalignment of the heading of the car () compared to center line of the track (defined by previous and
+    # Calculates the misalignment of the heading of the car () compared to center line of the track (defined by previous and
     # the next waypoint (the car is between them)
     def get_car_heading_error(self):  # track direction vs heading
         next_point = self.get_way_point(self.closest_waypoints[1])
@@ -328,10 +328,10 @@ class RewardEvaluator:
 
 """
 This is the core function called by the environment to calculate reward value for every point of time of the training. 
-params : input values for the reward calculation (see above)
+params: input values for the reward calculation (see above)
 
-Usually this function contains all reward calculations an logic implemented. Instead, this code example is instantiating 
-RewardEvaluator which has implemented set of features one can easily combine and use.
+Usually, this function contains all reward calculations a logic implemented. Instead, this code example is instantiating 
+RewardEvaluator which has implemented a set of features one can easily combine and use.
 """
 
 
