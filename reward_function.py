@@ -297,7 +297,7 @@ class RewardEvaluator:
                 self.log_feature("isStraightOnMaxSpeed")
                 result_reward = result_reward + float(self.REWARD_MAX * 1)
 
-            if self.is_in_turn() and self.isOptimumSpeed():
+            if self.is_in_turn() and self.is_optimum_speed():
                 self.log_feature("isOptimumSpeedinCurve")
                 result_reward = result_reward + float(self.REWARD_MAX * 0.6)
 
