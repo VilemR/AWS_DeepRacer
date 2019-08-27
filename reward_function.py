@@ -272,7 +272,7 @@ class RewardEvaluator:
         try:
             # No reward => Fatal behaviour, NOREWARD!  (out of track, reversed, sleeping)
             if self.all_wheels_on_track == False or self.is_reversed == True or (self.speed < (0.1 * self.MAX_SPEED)):
-                self.logFeature("all_wheels_on_track or is_reversed issue")
+                self.log_feature("all_wheels_on_track or is_reversed issue")
                 self.status_to_string()
                 return float(self.PENALTY_MAX)
 
